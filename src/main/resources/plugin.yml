@@ -1,0 +1,15 @@
+name: Core
+author: Azodox_
+api-version: 1.18
+version: 0.1.0
+main: fr.olten.xmas.Core
+commands:
+  home:
+  sethome:
+  delhome:
+  homes:
+  tpa:
+  tpaccept:
+  tpdeny:
+  tpahere:
+  tpalist:
