@@ -19,17 +19,16 @@ public class HomeCommand {
     }
 
     @ExecuteCommand
-    private void home(CommandContext ctx, @OptionalArg OfflinePlayer offlinePlayer, String homeName){
-        if(ctx.getArgumentStrings().get(0).equals(offlinePlayer.getName())){
+    private void home(CommandContext ctx, @OptionalArg OfflinePlayer offlinePlayer, String homeName) {
+        if(!(ctx.getSender() instanceof Player)){
             if(ctx.getSender().hasPermission("xmas.homes.see.others")){
-
+                ctx.getSender().sendMessage("Voici les homes :");
+                this.core.getHomeManager().getHomes(offlinePlayer.getUniqueId()).forEach(h -> ctx.getSender().sendMessage(h.toString()));
             }
         }else {
-            if(ctx.getSender() instanceof Player){
-                Player player = (Player) ctx.getSender();
-                Home home = new Home(UUID.randomUUID().toString(), player.getLocation());
-                this.core.getHomeManager().add(player, home);
-            }
+            Player player = (Player) ctx.getSender();
+            Home home = new Home(UUID.randomUUID().toString(), player.getLocation());
+            this.core.getHomeManager().add(player.getUniqueId(), home);
         }
     }
 }
