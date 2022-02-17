@@ -5,10 +5,16 @@ import fr.olten.xmas.home.Home;
 import io.github.llewvallis.commandbuilder.CommandContext;
 import io.github.llewvallis.commandbuilder.ExecuteCommand;
 import io.github.llewvallis.commandbuilder.OptionalArg;
-import org.bukkit.OfflinePlayer;
+import io.github.llewvallis.commandbuilder.PlayerOnlyCommand;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+import java.util.Optional;
+import java.util.Set;
+
 
 public class HomeCommand {
 
@@ -19,16 +25,31 @@ public class HomeCommand {
     }
 
     @ExecuteCommand
-    private void home(CommandContext ctx, @OptionalArg OfflinePlayer offlinePlayer, String homeName) {
-        if(!(ctx.getSender() instanceof Player)){
-            if(ctx.getSender().hasPermission("xmas.homes.see.others")){
-                ctx.getSender().sendMessage("Voici les homes :");
-                this.core.getHomeManager().getHomes(offlinePlayer.getUniqueId()).forEach(h -> ctx.getSender().sendMessage(h.toString()));
+    @PlayerOnlyCommand
+    private void home(CommandContext ctx, @OptionalArg String homeName) {
+        Player player = (Player) ctx.getSender();
+        if(ctx.getArgumentStrings().size() == 0){
+            Set<Home> homes = this.core.getHomeManager().getHomes(player.getUniqueId());
+            if(homes.isEmpty()){
+                player.sendMessage(ChatColor.YELLOW + "Vous n'avez aucun home.");
+                return;
             }
-        }else {
-            Player player = (Player) ctx.getSender();
-            Home home = new Home(UUID.randomUUID().toString(), player.getLocation());
-            this.core.getHomeManager().add(player.getUniqueId(), home);
+            player.spigot().sendMessage(homes.stream().map(h -> {
+                BaseComponent baseComponent = h.toComponent();
+                baseComponent.addExtra(" ");
+                return baseComponent;
+            }).toArray(BaseComponent[]::new));
+
+            return;
         }
+
+        Optional<Home> optional = this.core.getHomeManager().getHome(player.getUniqueId(), homeName);
+        if(optional.isEmpty()){
+            player.sendMessage(ChatColor.RED + "Erreur : ce home n'existe pas.");
+            return;
+        }
+
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GRAY + "Téléportation vers " + ChatColor.BOLD + homeName + ChatColor.GRAY + "..."));
+        player.teleport(optional.get().location());
     }
 }
