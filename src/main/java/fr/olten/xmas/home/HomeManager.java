@@ -9,7 +9,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -68,8 +68,6 @@ public class HomeManager {
     public void add(UUID uuid, Home home) {
         //TODO : add logs
         YamlConfiguration conf = getConfiguration(uuid);
-        List<String> homes = conf.getStringList("homes");
-        //homes.add(home.name());
 
         conf.set("homes." + home.name() + ".x", home.location().getX());
         conf.set("homes." + home.name() + ".y", home.location().getY());
@@ -78,7 +76,17 @@ public class HomeManager {
         conf.set("homes." + home.name() + ".yaw", home.location().getYaw());
         conf.set("homes." + home.name() + ".pitch", home.location().getPitch());
 
-        //conf.set("homes", homes);
+        try {
+            conf.save(getFile(uuid));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void remove(UUID uuid, String homeName){
+        YamlConfiguration conf = getConfiguration(uuid);
+        conf.set("homes." + homeName, null);
+
         try {
             conf.save(getFile(uuid));
         } catch (IOException e) {
@@ -89,6 +97,9 @@ public class HomeManager {
     public Set<Home> getHomes(UUID uuid){
         YamlConfiguration conf = getConfiguration(uuid);
         ConfigurationSection section = conf.getConfigurationSection("homes");
+        if(section == null){
+            return Set.of();
+        }
         return section.getKeys(false).stream().map(h -> new Home(h,
                 new Location(
                         Bukkit.getWorld(conf.getString("homes." + h + ".world_name")),
@@ -99,6 +110,10 @@ public class HomeManager {
                         (float) conf.getDouble("homes." + h + ".pitch")
                 )
         )).collect(Collectors.toSet());
+    }
+
+    public Optional<Home> getHome(UUID uuid, String homeName){
+        return getHomes(uuid).stream().filter(h -> h.name().equals(homeName)).findAny();
     }
 
     public YamlConfiguration getConfiguration(UUID uuid){
