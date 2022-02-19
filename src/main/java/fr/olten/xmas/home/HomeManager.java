@@ -3,6 +3,7 @@ package fr.olten.xmas.home;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -18,22 +19,22 @@ import java.util.stream.Collectors;
 public class HomeManager {
 
     private final static Logger LOGGER = Logger.getLogger("HomeManager");
-    private File homeFolder;
+    private static File homeFolder;
 
     public void setup(Plugin plugin){
         LOGGER.info("Starting setup (Plugin: " + plugin.getName() + ")");
-        this.homeFolder = new File(plugin.getDataFolder(), "homes");
+        homeFolder = new File(plugin.getDataFolder(), "homes");
 
-        if (!this.homeFolder.exists()) {
+        if (!homeFolder.exists()) {
             LOGGER.info("Homes folder doesn't exist, creating it...");
-            this.homeFolder.mkdirs();
+            homeFolder.mkdirs();
             LOGGER.info("Homes folder created!");
         }
         LOGGER.info("Setup completed!");
     }
 
     public void init(Player player) throws IOException {
-        File file = new File(this.homeFolder, player.getUniqueId() + ".yml");
+        File file = new File(homeFolder, player.getUniqueId() + ".yml");
 
         if(!file.exists()){
             try {
@@ -121,7 +122,7 @@ public class HomeManager {
     }
 
     public File getFile(UUID uuid){
-        return new File(this.homeFolder, uuid + ".yml");
+        return new File(homeFolder, uuid + ".yml");
     }
 
     public void save(UUID uuid){
@@ -130,5 +131,15 @@ public class HomeManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static UUID getUUIDByName(String name){
+        for(File file : homeFolder.listFiles()){
+            FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
+            if(conf.getString("name").equals(name)){
+                return UUID.fromString(file.getName().replace(".yml", ""));
+            }
+        }
+        return null;
     }
 }
