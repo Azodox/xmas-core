@@ -32,8 +32,6 @@ public class ScrollerInventory {
         Inventory page = getBlankPage(name);
 
         for (ItemStack item : items) {
-            System.out.println(page.firstEmpty());
-            System.out.println(item.getItemMeta().getDisplayName());
             if (page.firstEmpty() >= 36) {
                 pages.add(page);
 
