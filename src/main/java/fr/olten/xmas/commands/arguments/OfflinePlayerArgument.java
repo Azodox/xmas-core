@@ -14,7 +14,8 @@ public class OfflinePlayerArgument implements ArgumentParser<OfflinePlayer> {
     @Override
     public OfflinePlayer parse(String argument, int position, CommandContext context) throws ArgumentParseException {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(argument);
-        if (!offlinePlayer.isOnline() && !offlinePlayer.hasPlayedBefore()) {
+
+        if (!offlinePlayer.hasPlayedBefore()) {
             throw new ArgumentParseException("ce joueur n'existe pas");
         }
 
