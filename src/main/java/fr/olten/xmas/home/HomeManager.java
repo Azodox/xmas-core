@@ -67,9 +67,10 @@ public class HomeManager {
     }
 
     public void add(UUID uuid, Home home) {
-        //TODO : add logs
+        LOGGER.info("Attempting to write on " + uuid + "...");
         YamlConfiguration conf = getConfiguration(uuid);
 
+        LOGGER.info("Writing: " + home.toString().replace("/(\r\n|\n|\r)/gm", ""))
         conf.set("homes." + home.name() + ".x", home.location().getX());
         conf.set("homes." + home.name() + ".y", home.location().getY());
         conf.set("homes." + home.name() + ".z", home.location().getZ());
@@ -79,12 +80,15 @@ public class HomeManager {
 
         try {
             conf.save(getFile(uuid));
+            LOGGER.info("Successfully wrote new home (" + home.name() + ") for " + uuid)
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("An error has occured while trying to save the modification on " + uuid + "'s home file.")
+            LOGGER.severe("Here is the error message : " + e.getMessage())
         }
     }
 
     public void remove(UUID uuid, String homeName){
+        LOGGER.info("Trying to remove home...")
         YamlConfiguration conf = getConfiguration(uuid);
         conf.set("homes." + homeName, null);
 
