@@ -80,10 +80,10 @@ public class HomeManager {
 
         try {
             conf.save(getFile(uuid));
-            LOGGER.info("Successfully wrote new home (" + home.name() + ") for " + uuid)
+            LOGGER.info("Successfully wrote new home (" + home.name() + ") for " + uuid);
         } catch (IOException e) {
-            LOGGER.severe("An error has occured while trying to save the modification on " + uuid + "'s home file.")
-            LOGGER.severe("Here is the error message : " + e.getMessage())
+            LOGGER.severe("An error has occured while trying to save the modification on " + uuid + "'s home file.");
+            LOGGER.severe("Here is the error message : " + e.getMessage());
         }
     }
 
@@ -94,8 +94,9 @@ public class HomeManager {
 
         try {
             conf.save(getFile(uuid));
+            LOGGER.info("Removed home named '" + homeName + "' of " + uuid);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("An error appeared when tried to delete a home from " + uuid + "'s home file.");
         }
     }
 
