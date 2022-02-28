@@ -17,33 +17,58 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+    Welcome to 2022 xmas event's core.
+    Here is the plugin center of the event.
+    In this plugin, you can find the basic systems of the event,
+    such as homes, teleportation, automatic messages and all general functionnalities.
+*/
 public class Core extends JavaPlugin {
 
     private HeadUtil headUtil;
     private final HomeManager homeManager = new HomeManager();
 
+    /**
+        This method is executed when the plugin starts.
+        This is where we initalize everything. (e.g class' instance, call other methods)
+
+        When everything's done, we can print it in the console.
+    */
     @Override
     public void onEnable() {
         this.homeManager.setup(this);
         this.headUtil = new HeadUtil();
-
+        
         registerCommands();
+        /*
+            Register every single listener needed.
+        */
         registerEvents(
                 new PlayerJoinListener(this),
                 new ScrollerInventory.ScrollerInventoryListener(),
                 new InventoryClickListener(this)
         );
+        /*
+            Register with HeadUtil.java all needed mc heads.
+        */
         registerHeads();
 
         getLogger().info("Enabled!");
     }
 
+    /**
+        This will simplify the way of registering multiple listeners.
+    */
     private void registerEvents(Listener...listeners) {
         for (Listener listener : listeners) {
             getServer().getPluginManager().registerEvents(listener, this);
         }
     }
 
+    /*
+        Register commands.
+        @link https://github.com/LlewVallis/command-builder
+    */
     private void registerCommands() {
         DefaultInferenceProvider.getGlobal().register(OfflinePlayer.class, new OfflinePlayerArgument());
         new CommandBuilder().infer(new HomeCommand(this)).build(new ReflectionCommandCallback(new HomeCommand(this)), getCommand("home"));
