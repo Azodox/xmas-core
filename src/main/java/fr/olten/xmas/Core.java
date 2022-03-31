@@ -48,6 +48,11 @@ public class Core extends JavaPlugin {
         this.homeManager.setup(this);
         this.headUtil = new HeadUtil();
 
+        /*
+            Register with HeadUtil.java all needed mc heads.
+        */
+        registerHeads();
+
         Arrays.stream(RankUnit.values()).forEach(TeamNameTagManager::init);
         getServer().getOnlinePlayers().forEach(TeamNameTagManager::update);
 
@@ -62,10 +67,6 @@ public class Core extends JavaPlugin {
                 new PlayerChatListener(this),
                 new RankChangedListener()
         );
-        /*
-            Register with HeadUtil.java all needed mc heads.
-        */
-        registerHeads();
 
         getLogger().info("Enabled!");
     }
@@ -74,6 +75,7 @@ public class Core extends JavaPlugin {
     @Override
     public void onDisable() {
         TeamNameTagManager.reset();
+        HeadUtil.getHeads().clear();
     }
 
     /**
@@ -111,7 +113,6 @@ public class Core extends JavaPlugin {
         this.headUtil.addHead("4e338bb32287afd632bc874b32f53a56f44b7aee26cd3d5c6fdad99f340f470", "birdhouse-purple");
         this.headUtil.addHead("24fbe85787c12787ddceb852d7142dae907578a272cc2021555ba805d227ea7", "birdhouse-yellow");
         this.headUtil.addHead("fc1bd7ce2d527ec6f76b8e81f19d69d1b9ff4d5b6cd6cc764eed1945a6c6c", "birdhouse-green");
-        this.headUtil.addHead("75465f77e7fd4217384998c33859ad9636e1893bee405dd2519423b51767", "birdhouse-red");
         this.headUtil.addHead("75465f77e7fd4217384998c33859ad9636e1893bee405dd2519423b51767", "birdhouse-red");
     }
 
