@@ -65,7 +65,7 @@ public class Core extends JavaPlugin {
         /*
             Register with HeadUtil.java all needed mc heads.
         */
-        //registerHeads();
+        registerHeads();
 
         getLogger().info("Enabled!");
     }

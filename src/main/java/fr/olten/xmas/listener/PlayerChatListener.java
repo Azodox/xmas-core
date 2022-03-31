@@ -18,6 +18,12 @@ public class PlayerChatListener implements Listener {
         this.core = core;
     }
 
+    /**
+     * Handle the chat event.
+     * Replace <3 by the heart symbol.
+     * And set the format.
+     * @param event The event
+     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onChat(AsyncPlayerChatEvent event) {
         var player = event.getPlayer();
