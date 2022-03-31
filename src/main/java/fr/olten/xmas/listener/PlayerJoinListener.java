@@ -2,6 +2,7 @@ package fr.olten.xmas.listener;
 
 import fr.olten.xmas.Core;
 import fr.olten.xmas.manager.TeamNameTagManager;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,5 +34,6 @@ public class PlayerJoinListener implements Listener {
         }
 
         TeamNameTagManager.update(player);
+        player.sendTitle(ChatColor.AQUA + "Joyeux Noël", ChatColor.BOLD + player.getName(), 20, 40, 20);
     }
 }
