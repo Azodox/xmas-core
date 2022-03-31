@@ -1,12 +1,11 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'maven-publish'
 }
 
 group 'fr.olten'
 version '0.1.0'
-
-libsDirName = "K:\\Dev\\Velocity\\xmas\\plugins"
 
 compileJava.options.encoding = 'UTF-8'
 sourceCompatibility = targetCompatibility = 16
@@ -18,9 +17,20 @@ repositories {
 
 dependencies {
     implementation 'io.github.llewvallis:command-builder:2.2.0'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation group: 'jline', name: 'jline', version: '3.0.0.M1'
     shadow 'org.spigotmc:spigot:1.18.1-R0.1-SNAPSHOT'
+    shadow 'net.valneas:AccountSystem:0.3.2-xmas'
 }
 
 shadowJar {
     archiveClassifier.set('')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }
