@@ -35,6 +35,14 @@ public final class HeadUtil {
     }
 
     /**
+     * Get the whole list of names
+     * @return this#translator
+     */
+    public static Map<String, String> getTranslator() {
+        return translator;
+    }
+
+    /**
      * Add a head in the heads HashMap
      * @param id : The head's id
      * @param name : The head's name (shortcut name to simplify getting a head, for example: "+" instead of "5+48s5145841.12")
@@ -82,6 +90,6 @@ public final class HeadUtil {
     }
 
     private String getTextureURLByMcId(String id){
-        return "http://textures.minecraft.net/texture/" + id;
+        return "https://textures.minecraft.net/texture/" + id;
     }
 }
