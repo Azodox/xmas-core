@@ -17,6 +17,12 @@ public class PlayerJoinListener implements Listener {
         this.core = core;
     }
 
+    /**
+     * Called when a player joins the server.
+     * Will update the player's team name tag and home's file's name field.
+     * @param e The event.
+     * @throws IOException If an error occurs.
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent e) throws IOException {
         Player player = e.getPlayer();
