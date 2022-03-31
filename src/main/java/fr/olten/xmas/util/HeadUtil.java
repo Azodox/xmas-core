@@ -27,6 +27,14 @@ public final class HeadUtil {
     }
 
     /**
+     * Get the whole list of heads
+     * @return this#heads
+     */
+    public static Map<String, ItemStack> getHeads(){
+        return heads;
+    }
+
+    /**
      * Add a head in the heads HashMap
      * @param id : The head's id
      * @param name : The head's name (shortcut name to simplify getting a head, for example: "+" instead of "5+48s5145841.12")
