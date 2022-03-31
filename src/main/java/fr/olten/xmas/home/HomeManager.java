@@ -70,7 +70,7 @@ public class HomeManager {
         LOGGER.info("Attempting to write on " + uuid + "...");
         YamlConfiguration conf = getConfiguration(uuid);
 
-        LOGGER.info("Writing: " + home.toString().replace("/(\r\n|\n|\r)/gm", ""))
+        LOGGER.info("Writing: " + home.toString().replace("/(\r\n|\n|\r)/gm", ""));
         conf.set("homes." + home.name() + ".x", home.location().getX());
         conf.set("homes." + home.name() + ".y", home.location().getY());
         conf.set("homes." + home.name() + ".z", home.location().getZ());
@@ -88,7 +88,7 @@ public class HomeManager {
     }
 
     public void remove(UUID uuid, String homeName){
-        LOGGER.info("Trying to remove home...")
+        LOGGER.info("Trying to remove home...");
         YamlConfiguration conf = getConfiguration(uuid);
         conf.set("homes." + homeName, null);
 
