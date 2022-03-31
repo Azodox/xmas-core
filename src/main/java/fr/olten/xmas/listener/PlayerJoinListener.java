@@ -1,7 +1,7 @@
 package fr.olten.xmas.listener;
 
 import fr.olten.xmas.Core;
-import fr.olten.xmas.home.Home;
+import fr.olten.xmas.manager.TeamNameTagManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,5 +25,7 @@ public class PlayerJoinListener implements Listener {
         }else{
             this.core.getHomeManager().init(player);
         }
+
+        TeamNameTagManager.update(player);
     }
 }
