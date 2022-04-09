@@ -23,7 +23,7 @@ public class TeamNameTagManager {
      * @param rank The rank to create the team for.
      */
     public static void init(RankUnit rank){
-        var team = SCOREBOARD.registerNewTeam(rank.getName());
+        var team = SCOREBOARD.registerNewTeam(String.valueOf(rank.getPower()));
         team.setPrefix(rank.getPrefix());
         team.setColor(rank.getColor());
         team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
@@ -54,7 +54,7 @@ public class TeamNameTagManager {
      */
     public static void update(AccountManager accountManager){
         var rank = accountManager.newRankManager().getMajorRank();
-        var team = SCOREBOARD.getTeam(rank.getName());
+        var team = SCOREBOARD.getTeam(String.valueOf(rank.getPower()));
         team.addEntry(accountManager.getName());
     }
 }
