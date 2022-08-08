@@ -1,9 +1,7 @@
 package fr.olten.xmas.home;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -17,9 +15,8 @@ public record Home(String name, Location location) {
                 '}';
     }
 
-    public BaseComponent toComponent(){
-        TextComponent textComponent = new TextComponent(name);
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(
+    public Component toComponent(){
+        return Component.text(name).hoverEvent(HoverEvent.showText(Component.text(
                 ChatColor.DARK_GRAY + "§m                 \n" +
                         ChatColor.RED + "x : " + ChatColor.YELLOW + location.getX() + "\n" +
                         ChatColor.RED + "y : " + ChatColor.YELLOW + location.getY() + "\n" +
@@ -29,6 +26,5 @@ public record Home(String name, Location location) {
                         ChatColor.RED + "world : " + ChatColor.YELLOW + location.getWorld().getName() + "\n" +
                         ChatColor.DARK_GRAY + "§m                 "
         )));
-        return textComponent;
     }
 }
