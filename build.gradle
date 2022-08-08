@@ -1,11 +1,12 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
-    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group 'fr.olten'
-version '0.1.0'
+version '0.2.0'
 
 compileJava.options.encoding = 'UTF-8'
 sourceCompatibility = targetCompatibility = 17
@@ -13,27 +14,35 @@ sourceCompatibility = targetCompatibility = 17
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url "https://repo.codemc.org/repository/maven-public/"
-    }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'io.github.llewvallis:command-builder:2.2.0'
     implementation 'commons-codec:commons-codec:1.15'
     implementation group: 'jline', name: 'jline', version: '3.0.0.M1'
-    shadow 'org.spigotmc:spigot:1.18.1-R0.1-SNAPSHOT'
-    shadow 'net.valneas:AccountSystem:0.3.2-xmas'
+    implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
+    implementation 'com.github.DevNatan:inventory-framework:2.5.2'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
+    compileOnly 'io.github.azodox:accountsystem-api:0.6.2'
+    compileOnly ('org.spigotmc:spigot:1.19-R0.1-SNAPSHOT'){
+        exclude group: 'org.spigotmc', module: 'spigot-api'
+    }
 }
 
 shadowJar {
     archiveClassifier.set('')
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
+compileJava {
+    options.compilerArgs += ["-parameters"]
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
     }
+    duplicatesStrategy = 'include'
 }
