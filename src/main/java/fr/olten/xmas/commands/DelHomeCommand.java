@@ -1,13 +1,17 @@
 package fr.olten.xmas.commands;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.HelpCommand;
 import fr.olten.xmas.Core;
-import io.github.llewvallis.commandbuilder.CommandContext;
-import io.github.llewvallis.commandbuilder.ExecuteCommand;
-import io.github.llewvallis.commandbuilder.PlayerOnlyCommand;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
-public class DelHomeCommand {
+@CommandAlias("delhome")
+public class DelHomeCommand extends BaseCommand {
 
     private final Core core;
 
@@ -15,16 +19,19 @@ public class DelHomeCommand {
         this.core = core;
     }
 
-    @ExecuteCommand
-    @PlayerOnlyCommand
-    public void delHome(CommandContext ctx, String homeName){
-        Player player = (Player) ctx.getSender();
-
+    @Default
+    @Description("Delete a home.")
+    public void delHome(Player player, String homeName){
         if(this.core.getHomeManager().getHome(player.getUniqueId(), homeName).isEmpty()){
-            player.sendMessage(ChatColor.RED + "Erreur : ce home n'existe pas.");
+            player.sendMessage(Component.text("Erreur : ce home n'existe pas.").color(NamedTextColor.RED));
             return;
         }
 
         this.core.getHomeManager().remove(player.getUniqueId(), homeName);
+    }
+
+    @HelpCommand
+    public void onHelp(Player player){
+        player.sendMessage(Component.text("/delhome <homeName>").color(NamedTextColor.RED));
     }
 }
