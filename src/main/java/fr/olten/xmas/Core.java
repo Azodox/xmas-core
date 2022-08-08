@@ -1,45 +1,39 @@
 package fr.olten.xmas;
 
+import co.aikar.commands.PaperCommandManager;
 import fr.olten.xmas.commands.DelHomeCommand;
 import fr.olten.xmas.commands.HomeCommand;
 import fr.olten.xmas.commands.HomesCommand;
 import fr.olten.xmas.commands.SetHomeCommand;
-import fr.olten.xmas.commands.arguments.OfflinePlayerArgument;
+import fr.olten.xmas.commands.resolver.OfflinePlayerResolver;
 import fr.olten.xmas.home.HomeManager;
-import fr.olten.xmas.listener.InventoryClickListener;
 import fr.olten.xmas.listener.PlayerChatListener;
 import fr.olten.xmas.listener.PlayerJoinListener;
 import fr.olten.xmas.listener.RankChangedListener;
 import fr.olten.xmas.manager.TeamNameTagManager;
 import fr.olten.xmas.util.HeadUtil;
-import fr.olten.xmas.util.ScrollerInventory;
-import io.github.llewvallis.commandbuilder.CommandBuilder;
-import io.github.llewvallis.commandbuilder.DefaultInferenceProvider;
-import io.github.llewvallis.commandbuilder.ReflectionCommandCallback;
-import net.valneas.account.rank.RankUnit;
-import org.bukkit.ChatColor;
+import net.valneas.account.AccountSystemApi;
+import net.valneas.account.lib.eventbus.EventBus;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Arrays;
 
 /**
     Welcome to 2022 xmas event's core.
     Here is the plugin center of the event.
     In this plugin, you can find the basic systems of the event,
-    such as homes, teleportation, automatic messages and all general functionnalities.
+    such as homes, teleportation, automatic messages and all general functionalities.
 */
 public class Core extends JavaPlugin {
-
-    public static final String CHAT_FORMAT = "%rank%" + "%1$s " + ChatColor.DARK_GRAY + "» " + ChatColor.RESET + "%2$s";
 
     private HeadUtil headUtil;
     private final HomeManager homeManager = new HomeManager();
 
     /**
         This method is executed when the plugin starts.
-        This is where we initalize everything. (e.g class' instance, call other methods)
+        This is where we initialize everything. (e.g class' instance, call other methods)
 
         When everything's done, we can print it in the console.
     */
@@ -53,24 +47,25 @@ public class Core extends JavaPlugin {
         */
         registerHeads();
 
-        Arrays.stream(RankUnit.values()).forEach(TeamNameTagManager::init);
+        var provider = getServer().getServicesManager().getRegistration(AccountSystemApi.class);
+        if(provider != null) {
+            var accountSystem = provider.getProvider();
+            accountSystem.getRankHandler().getAllRanksQuery().stream().forEach(TeamNameTagManager::init);
+            getServer().getPluginManager().registerEvents(new PlayerChatListener(this, accountSystem), this);
+        }
         getServer().getOnlinePlayers().forEach(TeamNameTagManager::update);
-
         registerCommands();
         /*
             Register every single listener needed.
         */
         registerEvents(
-                new PlayerJoinListener(this),
-                new ScrollerInventory.ScrollerInventoryListener(),
-                new InventoryClickListener(this),
-                new PlayerChatListener(this),
-                new RankChangedListener()
+                new PlayerJoinListener(this)
         );
+
+        EventBus.getDefault().register(new RankChangedListener());
 
         getLogger().info("Enabled!");
     }
-
 
     @Override
     public void onDisable() {
@@ -89,14 +84,15 @@ public class Core extends JavaPlugin {
 
     /**
         Register commands.
-        @link https://github.com/LlewVallis/command-builder
     */
     private void registerCommands() {
-        DefaultInferenceProvider.getGlobal().register(OfflinePlayer.class, new OfflinePlayerArgument());
-        new CommandBuilder().infer(new HomeCommand(this)).build(new ReflectionCommandCallback(new HomeCommand(this)), getCommand("home"));
-        new CommandBuilder().infer(new SetHomeCommand(this)).build(new ReflectionCommandCallback(new SetHomeCommand(this)), getCommand("sethome"));
-        new CommandBuilder().infer(new DelHomeCommand(this)).build(new ReflectionCommandCallback(new DelHomeCommand(this)), getCommand("delhome"));
-        new CommandBuilder().infer(new HomesCommand(this)).build(new ReflectionCommandCallback(new HomesCommand(this)), getCommand("homes"));
+        var commandManager = new PaperCommandManager(this);
+        commandManager.getCommandContexts().registerContext(OfflinePlayer.class, new OfflinePlayerResolver());
+        commandManager.getCommandCompletions().registerCompletion("target", c -> Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+        commandManager.registerCommand(new DelHomeCommand(this));
+        commandManager.registerCommand(new HomesCommand(this));
+        commandManager.registerCommand(new HomeCommand(this));
+        commandManager.registerCommand(new SetHomeCommand(this));
     }
 
     private void registerHeads(){
