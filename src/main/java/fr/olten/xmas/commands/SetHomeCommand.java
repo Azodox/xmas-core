@@ -1,14 +1,19 @@
 package fr.olten.xmas.commands;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.HelpCommand;
 import fr.olten.xmas.Core;
 import fr.olten.xmas.home.Home;
-import io.github.llewvallis.commandbuilder.CommandContext;
-import io.github.llewvallis.commandbuilder.ExecuteCommand;
-import io.github.llewvallis.commandbuilder.PlayerOnlyCommand;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class SetHomeCommand {
+@CommandAlias("sethome")
+public class SetHomeCommand extends BaseCommand {
 
     private final Core core;
 
@@ -16,10 +21,9 @@ public class SetHomeCommand {
         this.core = core;
     }
 
-    @ExecuteCommand
-    @PlayerOnlyCommand
-    public void setHome(CommandContext ctx, String homeName){
-        Player player = (Player) ctx.getSender();
+    @Default
+    @Description("Set a home.")
+    public void setHome(Player player, String homeName){
         if (this.core.getHomeManager().getHomes(player.getUniqueId()).stream().anyMatch(h -> h.name().equals(homeName))) {
             player.sendMessage(ChatColor.RED + "Erreur : un de vos homes possède déjà ce nom.");
             return;
@@ -29,6 +33,11 @@ public class SetHomeCommand {
                 homeName,
                 player.getLocation()
         ));
-        player.sendMessage(ChatColor.AQUA + "Home créé avec succès.");
+        player.sendMessage(Component.text("Home créé avec succès.").color(NamedTextColor.AQUA));
+    }
+
+    @HelpCommand
+    public void onHelp(Player player){
+        player.sendMessage(Component.text("/sethome <nom>").color(NamedTextColor.RED));
     }
 }
