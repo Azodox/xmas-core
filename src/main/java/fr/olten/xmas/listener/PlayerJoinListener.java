@@ -2,13 +2,17 @@ package fr.olten.xmas.listener;
 
 import fr.olten.xmas.Core;
 import fr.olten.xmas.manager.TeamNameTagManager;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.IOException;
+import java.time.Duration;
 
 public class PlayerJoinListener implements Listener {
 
@@ -34,6 +38,10 @@ public class PlayerJoinListener implements Listener {
         }
 
         TeamNameTagManager.update(player);
-        player.sendTitle(ChatColor.AQUA + "Joyeux Noël", ChatColor.BOLD + player.getName(), 20, 40, 20);
+        player.showTitle(
+                Title.title(Component.text("Joyeux Noël").color(NamedTextColor.AQUA),
+                        Component.text(player.getName()).decorate(TextDecoration.BOLD),
+                        Title.Times.times(Duration.ofSeconds(2), Duration.ofSeconds(4), Duration.ofSeconds(2)))
+        );
     }
 }
